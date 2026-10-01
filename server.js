@@ -1,15 +1,21 @@
-import { tunnel as cloudflaredTunnel } from "cloudflared"
-import cookieParser from "cookie-parser"
-import { Server } from "socket.io"
-import { port } from "./config"
-import express, { urlencoded, json } from "express"
-import { renderFile } from "tarkine"
-import { createServer } from 'http'
+import { tunnel as cloudflaredTunnel } from "cloudflared";
+import cookieParser from "cookie-parser";
+import { Server } from "socket.io";
+import * as config from "./config.js";
+import express, { urlencoded, json } from "express";
+import { renderFile } from "tarkine";
+import { createServer } from 'http';
+import router from "./router.js";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express()
 const server = createServer(app)
 const io = new Server(server)
-const PORT = process.env.PORT || port
+const PORT = process.env.PORT || config.port
 global.remoteURL
 
 global.IO = io
@@ -21,14 +27,14 @@ app.use(urlencoded({ extended: false }))
 app.use(express.static(__dirname + "/public"))
 app.use(json())
 
-app.use("/", require("./router"))
+app.use("/", router)
 
 server.listen(PORT, async () => {
     const localURL = `http://localhost:${PORT}`
-    remoteURL = await cloudflaredTunnel({
+    global.remoteURL = await cloudflaredTunnel({
         "--url": localURL
     }).url
 
     console.log(`LOCAL  : ${localURL}`)
-    console.log(`REMOTE : ${remoteURL}`)
+    console.log(`REMOTE : ${global.remoteURL}`)
 })

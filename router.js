@@ -1,6 +1,6 @@
-const express = require("express")
+import express from "express";
+import * as config from "./config.js";
 const router = express.Router()
-const config = require("./config")
 
 
 const TARGETS = {}
@@ -58,4 +58,4 @@ router.route("/map").get((req, res) => {
 })
 
 
-module.exports = router
+export default router;
