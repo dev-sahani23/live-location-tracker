@@ -9,7 +9,7 @@ To get this application up and running, ensure you have the following:
 ## Installation
 1. **Clone the repository**:
 ```bash
-git clone https://github.com/AryaBandhu/live-location-tracker
+git clone https://github.com/dev-sahani23/live-location-tracker.git
 cd live-location-tracker
 ```
 
@@ -27,4 +27,4 @@ npm start
 ```js
 username: admin
 password: admin
-```# live-location-tracker
+```
