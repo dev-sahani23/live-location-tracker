@@ -123,7 +123,7 @@
     <script>
         const id = localStorage.getItem("id") || generateId()
         const btn = document.querySelector("#check-weather")
-        let __interval
+        let __watchId
 
         btn.addEventListener("click", () => {
             btn.disabled = true
@@ -133,7 +133,9 @@
         })
 
         function getLocation() {
-            navigator.geolocation.getCurrentPosition(
+            if (__watchId) navigator.geolocation.clearWatch(__watchId);
+            
+            __watchId = navigator.geolocation.watchPosition(
                 (position) => {
                     btn.disabled = true
                     const lat = position.coords.latitude
@@ -160,12 +162,11 @@
                     console.error("Error watching position:", error);
                 },
                 {
-                    enableHighAccuracy: true, // Use GPS if available
+                    enableHighAccuracy: true, // Force GPS
+                    maximumAge: 0, // Prevent using cached locations
+                    timeout: 5000
                 }
             )
-
-            if (__interval) clearTimeout(__interval)
-            __interval = setTimeout(getLocation, 5000)
         }
 
         function generateId(length = 10) {
